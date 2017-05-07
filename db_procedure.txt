@@ -1,0 +1,118 @@
+/* CREATE USER */
+DELIMITER $$
+USE `flask-api-mysql-simple`$$
+CREATE PROCEDURE `spCreateUser` ( 
+  IN p_Username varchar(50), 
+  IN p_Password varchar(50) ) 
+BEGIN if ( 
+  select exists (select 1 from tblUser where UserName = p_username) 
+) THEN select 'Username Exists !!';
+ELSE insert into tblUser (
+    UserName,
+    Password )
+values (
+    p_Username,
+    p_Password);
+
+END IF;
+
+END$$
+
+DELIMITER ;
+
+
+
+
+
+/* AUTHENTICATE USER */
+
+USE `flask-api-mysql-simple`;
+DROP procedure IF EXISTS `sp_AuthenticateUser`;
+
+DELIMITER $$
+USE `flask-api-mysql-simple`$$
+CREATE PROCEDURE `sp_AuthenticateUser` (
+  IN p_username VARCHAR(20) )
+BEGIN
+  select * from tblUser where UserName = p_username;
+END$$
+DELIMITER ;
+
+
+
+
+/* ADD ITEM */
+
+CREATE TABLE `flask-api-mysql-simple`.`tblItem` (
+  `Id` INT NULL AUTO_INCREMENT,
+  `UserId` VARCHAR(45) NULL,
+  `ItemName` VARCHAR(45) NULL,
+  PRIMARY KEY (`Id`));
+
+
+DELIMITER $$
+USE `flask-api-mysql-simple`$$
+CREATE PROCEDURE `sp_AddItems` (
+  in p_userId int,
+  in p_item varchar(25))
+BEGIN
+insert into tblItem(
+  UserId,
+  ItemName )
+values(
+  p_userId,
+  p_item);
+
+END$$
+
+DELIMITER ;
+
+
+/* GET ITEM */
+
+USE `flask-api-mysql-simple`;
+DROP procedure IF EXISTS `sp_GetAllItems`;
+
+DELIMITER $$
+USE `flask-api-mysql-simple`$$
+CREATE PROCEDURE `sp_GetAllItems` (
+  in p_userId int)
+BEGIN
+    select Id, ItemName from tblItem where UserId = p_userId; 
+END$$
+
+DELIMITER ;
+
+
+
+/* DELETE ITEM */
+
+USE `flask-api-mysql-simple`;
+DROP procedure IF EXISTS `sp_DeleteItem`;
+
+DELIMITER $$
+USE `flask-api-mysql-simple`$$
+CREATE PROCEDURE `sp_DeleteItem` (
+ in p_id int )
+BEGIN
+    delete from tblItem where id = p_id; 
+END$$
+
+DELIMITER ;
+
+
+
+/* EDIT ITEM */
+USE `flask-api-mysql-simple`;
+DROP procedure IF EXISTS `sp_UpdateItem`;
+
+DELIMITER $$
+USE `flask-api-mysql-simple`$$
+CREATE PROCEDURE `sp_UpdateItem` (
+  in p_id int,
+  in p_item varchar(25))
+BEGIN
+	UPDATE tblItem SET ItemName=p_item WHERE id=p_id; 
+
+END$$
+DELIMITER ;
